@@ -336,41 +336,48 @@
     const chatContainer = document.createElement('div');
     chatContainer.className = `chat-container${config.style.position === 'left' ? ' position-left' : ''}`;
 
-    const newConversationHTML = `
-        <div class="brand-header">
-            <img src="${config.branding.logo}" alt="${config.branding.name}">
-            <span>${config.branding.name}</span>
-            <button class="close-button">×</button>
-        </div>
-        <div class="new-conversation">
-            <h2 class="welcome-text">${config.branding.welcomeText}</h2>
-            <button class="new-chat-btn">
-                <svg class="message-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/>
-                </svg>
-                Send us a message
-            </button>
-            <p class="response-text">${config.branding.responseTimeText}</p>
-        </div>
-    `;
+const newConversationHTML = `
+  <div class="brand-header">
+    <img src="${config.branding.logo}" alt="${config.branding.name}">
+    <span>${config.branding.name}</span>
+    <button class="close-button">×</button>
+  </div>
+  <div class="new-conversation">
+    <h2 class="welcome-text">${config.branding.welcomeText}</h2>
+    <button class="new-chat-btn">
+      <svg class="message-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+        <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/>
+      </svg>
+      Send us a message
+    </button>
+    <p class="response-text">${config.branding.responseTimeText}</p>
+  </div>
+`;
 
-    const chatInterfaceHTML = `
-        <div class="chat-interface">
-            <div class="brand-header">
-                <img src="${config.branding.logo}" alt="${config.branding.name}">
-                <span>${config.branding.name}</span>
-                <button class="close-button">×</button>
-            </div>
-            <div class="chat-messages"></div>
-            <div class="chat-input">
-                <textarea placeholder="Type your message here..." rows="1"></textarea>
-                <button type="submit">Send</button>
-            </div>
-            <div class="chat-footer">
-                <a href="${config.branding.poweredBy.link}" target="_blank">${config.branding.poweredBy.text}</a>
-            </div>
-        </div>
-    `;
+const chatInterfaceHTML = `
+  <div class="chat-interface">
+    <!-- Your chat UI goes here -->
+  </div>
+`;
+
+widgetContainer.innerHTML = newConversationHTML + chatInterfaceHTML;
+
+const chatInterface = widgetContainer.querySelector('.chat-interface');
+if (chatInterface) {
+  chatInterface.style.display = 'none';
+}
+
+const newChatBtn = widgetContainer.querySelector('.new-chat-btn');
+const newConversation = widgetContainer.querySelector('.new-conversation');
+if (newChatBtn && newConversation && chatInterface) {
+  newChatBtn.addEventListener('click', function() {
+    newConversation.style.display = 'none';
+    chatInterface.style.display = 'block';
+    // (Optional) Focus the input
+    const chatInput = chatInterface.querySelector('input, textarea');
+    if (chatInput) chatInput.focus();
+  });
+}
 
     chatContainer.innerHTML = newConversationHTML + chatInterfaceHTML;
 
