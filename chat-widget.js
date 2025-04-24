@@ -1,6 +1,6 @@
  // Chat Widget Script
  (function() {
-  // Create and inject styles
+  // Create and inject styles (styles remain mostly unchanged)
   const styles = `
          .n8n-chat-widget {
           --chat--color-primary: var(--n8n-chat-primary-color, #ff0000);
@@ -76,60 +76,6 @@
           font-size: 18px;
           font-weight: 500;
           color: var(--chat--color-font);
-         }
-
-         .n8n-chat-widget .new-conversation {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%);
-          padding: 20px;
-          text-align: center;
-          width: 100%;
-          max-width: 300px;
-         }
-
-         .n8n-chat-widget .welcome-text {
-          font-size: 24px;
-          font-weight: 600;
-          color: var(--chat--color-font);
-          margin-bottom: 24px;
-          line-height: 1.3;
-         }
-
-         .n8n-chat-widget .new-chat-btn {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 8px;
-          width: 100%;
-          padding: 16px 24px;
-          background: linear-gradient(135deg, var(--chat--color-primary) 0%, var(--chat--color-secondary) 100%);
-          color: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          font-size: 16px;
-          transition: transform 0.3s;
-          font-weight: 500;
-          font-family: inherit;
-          margin-bottom: 12px;
-         }
-
-         .n8n-chat-widget .new-chat-btn:hover {
-          transform: scale(1.02);
-         }
-
-         .n8n-chat-widget .message-icon {
-          width: 20px;
-          height: 20px;
-         }
-
-         .n8n-chat-widget .response-text {
-          font-size: 14px;
-          color: var(--chat--color-font);
-          opacity: 0.7;
-          margin: 0;
          }
 
          .n8n-chat-widget .chat-interface {
@@ -341,28 +287,18 @@
   const chatContainer = document.createElement('div');
   chatContainer.className = `chat-container${config.style.position === 'left' ? ' position-left' : ''}`;
 
-  // Create HTML for new conversation section
-  const newConversationHTML = `
+  //Remove the welcome message and show directly the messages page.
+  //No need for the newConversationHTML.  Let's just populate the  chat Interface and start there.
+  const brandHeaderHTML = `
         <div class="brand-header">
             <img src="${config.branding.logo}" alt="${config.branding.name}">
             <span>${config.branding.name}</span>
             <button class="close-button">×</button>
         </div>
-        <div class="new-conversation">
-            <h2 class="welcome-text">${config.branding.welcomeText}</h2>
-            <button class="new-chat-btn">
-                <svg class="message-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.2L4 17.2V4h16v12z"/>
-                </svg>
-                Send us a message
-            </button>
-            <p class="response-text">${config.branding.responseTimeText}</p>
-        </div>
-    `;
+        `;
 
-  // Create HTML for chat interface section (initially hidden)
   const chatInterfaceHTML = `
-        <div class="chat-interface">
+        <div class="chat-interface active">
             <!-- Your chat UI goes here -->
             <div class="chat-messages"></div>
             <div class="chat-input">
@@ -371,33 +307,16 @@
             </div>
         </div>
     `;
-  // Append conversation and interface HTML
-  chatContainer.innerHTML = newConversationHTML + chatInterfaceHTML;
 
-  // Select elements
-  const chatInterface = chatContainer.querySelector('.chat-interface');
-  const newConversation = chatContainer.querySelector('.new-conversation');
-  const newChatBtn = chatContainer.querySelector('.new-chat-btn');
+  chatContainer.innerHTML = brandHeaderHTML + chatInterfaceHTML;
 
-  // Set the style of the newConversation to block
-  newConversation.style.display = 'block';
+  //Append it to the widget container:
+  widgetContainer.appendChild(chatContainer);
 
-  // Initially hide chat interface
-  if (chatInterface) {
-   chatInterface.style.display = 'none';
-  }
-
-  // Event listener for "Send us a message" button
-  if (newChatBtn && newConversation && chatInterface) {
-   newChatBtn.addEventListener('click', function() {
-    newConversation.style.display = 'none';
-    chatInterface.style.display = 'flex'; // Changed to flex for flexbox layout
-    // Focus the input
-    const chatInput = chatInterface.querySelector('textarea');
-    if (chatInput) chatInput.focus();
-   });
-  }
-
+  //Get all the chat parts:
+  const messagesContainer = chatContainer.querySelector('.chat-messages');
+  const textarea = chatContainer.querySelector('textarea');
+  const sendButton = chatContainer.querySelector('button[type="submit"]');
   const toggleButton = document.createElement('button');
   toggleButton.className = `chat-toggle${config.style.position === 'left' ? ' position-left' : ''}`;
   toggleButton.innerHTML = `
@@ -405,11 +324,6 @@
             <path d="M12 2C6.477 2 2 6.477 2 12c0 1.821.487 3.53 1.338 5L2.5 21.5l4.5-.838A9.955 9.955 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18c-1.476 0-2.886-.313-4.156-.878l-3.156.586.586-3.156A7.962 7.962 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/>
         </svg>`;
 
-  //   const messagesContainer = chatContainer.querySelector('.chat-messages');
-  const textarea = chatContainer.querySelector('textarea');
-  const sendButton = chatContainer.querySelector('button[type="submit"]');
-
-  widgetContainer.appendChild(chatContainer);
   widgetContainer.appendChild(toggleButton);
   document.body.appendChild(widgetContainer);
 
@@ -438,9 +352,9 @@
     });
 
     const responseData = await response.json();
-    //   chatContainer.querySelector('.brand-header').style.display = 'none';
-    //   chatContainer.querySelector('.new-conversation').style.display = 'none';
-    //   chatInterface.classList.add('active');
+    // chatContainer.querySelector('.brand-header').style.display = 'none';
+    // chatContainer.querySelector('.new-conversation').style.display = 'none';
+    // chatInterface.classList.add('active');
 
     const botMessageDiv = document.createElement('div');
     botMessageDiv.className = 'chat-message bot';
@@ -492,6 +406,9 @@
 
   function toggleChat() {
    chatContainer.classList.toggle('open');
+   if (chatContainer.classList.contains('open') && !currentSessionId) {
+    startNewConversation();
+   }
   }
 
   //Corrected and simplified Event listeners
