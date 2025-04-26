@@ -395,6 +395,13 @@
         return crypto.randomUUID();
     }
 
+    // Sanitize markdown from bot responses
+    const sanitizeMarkdown = (text) => {
+        return text.replace(/\*\*(.*?)\*\*/g, '$1')  // Remove **bold**
+                    .replace(/\*(.*?)\*/g, '$1')    // Remove *italic*
+                    .replace(/#/g, '');             // Remove headers if needed
+    };
+
     async function startNewConversation() {
         currentSessionId = generateUUID();
         const data = [{
@@ -423,7 +430,7 @@
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chat-message bot';
             const output = Array.isArray(responseData) ? responseData[0].output : responseData.output;
-            botMessageDiv.innerHTML = output.replace(/\n/g, '<br>');
+            botMessageDiv.innerHTML = sanitizeMarkdown(output).replace(/\n/g, '<br>');
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
@@ -462,7 +469,7 @@
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chat-message bot';
             const output = Array.isArray(data) ? data[0].output : data.output;
-            botMessageDiv.innerHTML = output.replace(/\n/g, '<br>');
+            botMessageDiv.innerHTML = sanitizeMarkdown(output).replace(/\n/g, '<br>');
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
